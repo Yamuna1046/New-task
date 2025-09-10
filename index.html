@@ -1,29 +1,49 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-  <title><h1>flowchart describing about Face recognisation</h1></title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Simple Web Project</title>
   <style>
-    body {font-family: Arial; text-align: center;}
-    .box {padding: 10px; margin: 15px auto; width: 300px; border-radius: 10px; color: #fff;}
-    .start {background:#e91e63;}
-    .new {background:#03a9f4;}
-    .photo {background:#ff5722;}
-    .store {background:#607d8b;}
-    .recog {background:#673ab7;}
-    .face {background:#80deea; color:#000;}
-    .csv {background:#ef9a9a; color:#000;}
-    .stop {background:#fff59d; color:#000;}
-    .arrow {font-size:22px;}
+    body {
+      font-family: Arial, sans-serif;
+      text-align: center;
+      background-color: #f4f4f4;
+      margin: 0;
+      padding: 20px;
+    }
+    h1 {
+      color: #333;
+    }
+    .gallery {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 10px;
+      margin-top: 20px;
+    }
+    .gallery img {
+      width: 200px;
+      height: 150px;
+      object-fit: cover;
+      border-radius: 8px;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.2);
+      transition: transform 0.3s;
+    }
+    .gallery img:hover {
+      transform: scale(1.05);
+    }
   </style>
 </head>
 <body>
-  <div class="box start">START</div><div class="arrow">⬇️</div>
-  <div class="box new">NEW USER</div><div class="arrow">⬇️</div>
-  <div class="box photo">GIVE YOUR PHOTOGRAPH</div><div class="arrow">⬇️</div>
-  <div class="box store">STORE FACE DATA</div><div class="arrow">⬇️</div>
-  <div class="box recog">RECOGNISE FACE</div><div class="arrow">⬇️</div>
-  <div class="box face">FACE RECOGNISED</div><div class="arrow">⬇️</div>
-  <div class="box csv">SAVE TO CSV FILE</div><div class="arrow">⬇️</div>
-  <div class="box stop">STOP</div>
+  <h1>My Simple Web Technologies Project</h1>
+  <p>This is a simple image gallery using HTML and CSS.</p>
+
+  <div class="gallery">
+    <img src="https://images.unsplash.com/photo-1503264116251-35a269479413?w=400" alt="Nature 1">
+    <img src="https://images.unsplash.com/photo-1500530855697-b586d89ba3ee?w=400" alt="Nature 2">
+    <img src="https://images.unsplash.com/photo-1496307042754-b4aa456c4a2d?w=400" alt="Nature 3">
+    <img src="https://images.unsplash.com/photo-1478145046317-39f10e56b5e9?w=400" alt="Nature 4">
+  </div>
 </body>
 </html>

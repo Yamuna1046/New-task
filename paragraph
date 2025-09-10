@@ -1,0 +1,5 @@
+This code builds a simple vertical flowchart using HTML and CSS,
+where each process step (like START, NEW USER, GIVE PHOTO, etc.) is placed inside a styled `<div>` box with a unique background color to differentiate the stages,
+and arrows (`⬇️`) are inserted between them to indicate flow; the CSS `.box` class defines common styling such as padding, width, rounded corners, and text color,
+while specific classes like `.start`, `.new`, `.photo`, etc., apply individual colors, and the `.arrow` class enlarges the arrow symbol,
+resulting in a clean, center-aligned sequence of colorful boxes connected by arrows that visually represent the face recognition process from START to STOP.

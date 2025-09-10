@@ -2,48 +2,207 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Simple Web Project</title>
+  <title>Smart Diary with Sentiment Analysis</title>
+  <script src="https://cdn.jsdelivr.net/npm/sentiment@5.0.2/dist/sentiment.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
   <style>
     body {
       font-family: Arial, sans-serif;
-      text-align: center;
-      background-color: #f4f4f4;
+      background: #f4f6f9;
       margin: 0;
       padding: 20px;
-    }
-    h1 {
       color: #333;
     }
-    .gallery {
-      display: flex;
-      flex-wrap: wrap;
-      justify-content: center;
-      gap: 10px;
-      margin-top: 20px;
+    h1, h2 {
+      text-align: center;
     }
-    .gallery img {
-      width: 200px;
-      height: 150px;
-      object-fit: cover;
+    .container {
+      max-width: 900px;
+      margin: auto;
+      background: #fff;
+      padding: 20px;
+      border-radius: 12px;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+    }
+    textarea {
+      width: 100%;
+      height: 120px;
+      padding: 12px;
+      font-size: 16px;
       border-radius: 8px;
-      box-shadow: 0 2px 6px rgba(0,0,0,0.2);
-      transition: transform 0.3s;
+      border: 1px solid #ccc;
+      margin-bottom: 10px;
+      resize: none;
     }
-    .gallery img:hover {
-      transform: scale(1.05);
+    button {
+      padding: 10px 20px;
+      background: #4caf50;
+      color: #fff;
+      border: none;
+      border-radius: 8px;
+      font-size: 16px;
+      cursor: pointer;
+    }
+    button:hover {
+      background: #43a047;
+    }
+    .entry {
+      background: #f9f9f9;
+      padding: 15px;
+      margin: 10px 0;
+      border-left: 6px solid #ccc;
+      border-radius: 8px;
+    }
+    .positive { border-left-color: #4caf50; }
+    .negative { border-left-color: #f44336; }
+    .neutral { border-left-color: #ff9800; }
+    .date {
+      font-size: 12px;
+      color: #666;
+    }
+    .mood {
+      font-weight: bold;
+    }
+    canvas {
+      margin-top: 20px;
     }
   </style>
 </head>
 <body>
-  <h1>My Simple Web Technologies Project</h1>
-  <p>This is a simple image gallery using HTML and CSS.</p>
+  <div class="container">
+    <h1>📓 Smart Diary</h1>
+    <textarea id="diaryInput" placeholder="Write your diary entry here..."></textarea>
+    <button onclick="saveEntry()">Save & Analyze</button>
 
-  <div class="gallery">
-    <img src="https://images.unsplash.com/photo-1503264116251-35a269479413?w=400" alt="Nature 1">
-    <img src="https://images.unsplash.com/photo-1500530855697-b586d89ba3ee?w=400" alt="Nature 2">
-    <img src="https://images.unsplash.com/photo-1496307042754-b4aa456c4a2d?w=400" alt="Nature 3">
-    <img src="https://images.unsplash.com/photo-1478145046317-39f10e56b5e9?w=400" alt="Nature 4">
+    <h2>📊 My Diary Entries</h2>
+    <div id="entries"></div>
+
+    <h2>📈 Mood Dashboard</h2>
+    <canvas id="moodChart"></canvas>
+    <canvas id="trendChart"></canvas>
   </div>
+
+  <script>
+    const sentiment = new Sentiment();
+
+    // Load entries on page load
+    window.onload = function() {
+      displayEntries();
+      updateCharts();
+    };
+
+    function saveEntry() {
+      const text = document.getElementById("diaryInput").value.trim();
+      if (!text) {
+        alert("⚠ Please write something!");
+        return;
+      }
+
+      // Analyze sentiment
+      const analysis = sentiment.analyze(text);
+      let mood = "Neutral", emoji = "😐", moodClass = "neutral";
+
+      if (analysis.score > 0) { mood = "Positive"; emoji = "😊"; moodClass = "positive"; }
+      else if (analysis.score < 0) { mood = "Negative"; emoji = "😞"; moodClass = "negative"; }
+
+      // Create entry
+      const entry = {
+        text,
+        date: new Date().toLocaleString(),
+        mood,
+        emoji,
+        moodClass,
+        score: analysis.score
+      };
+
+      // Save to localStorage
+      let entries = JSON.parse(localStorage.getItem("diaryEntries")) || [];
+      entries.unshift(entry);
+      localStorage.setItem("diaryEntries", JSON.stringify(entries));
+
+      document.getElementById("diaryInput").value = "";
+
+      displayEntries();
+      updateCharts();
+    }
+
+    function displayEntries() {
+      const entriesDiv = document.getElementById("entries");
+      let entries = JSON.parse(localStorage.getItem("diaryEntries")) || [];
+
+      if (entries.length === 0) {
+        entriesDiv.innerHTML = "<p>No diary entries yet.</p>";
+        return;
+      }
+
+      entriesDiv.innerHTML = "";
+      entries.forEach(entry => {
+        const div = document.createElement("div");
+        div.className = "entry " + entry.moodClass;
+        div.innerHTML = `
+          <p>${entry.text}</p>
+          <p class="mood">${entry.emoji} Mood: ${entry.mood} (Score: ${entry.score})</p>
+          <p class="date">🕒 ${entry.date}</p>
+        `;
+        entriesDiv.appendChild(div);
+      });
+    }
+
+    function updateCharts() {
+      let entries = JSON.parse(localStorage.getItem("diaryEntries")) || [];
+
+      if (entries.length === 0) return;
+
+      // Count moods
+      let moodCounts = { Positive: 0, Negative: 0, Neutral: 0 };
+      let trendLabels = [];
+      let trendScores = [];
+
+      entries.slice().reverse().forEach((entry, index) => {
+        moodCounts[entry.mood]++;
+        trendLabels.push(Day ${index+1});
+        trendScores.push(entry.score);
+      });
+
+      // Destroy old charts if they exist
+      if (window.moodChartInstance) window.moodChartInstance.destroy();
+      if (window.trendChartInstance) window.trendChartInstance.destroy();
+
+      // Mood distribution (Pie Chart)
+      const ctx1 = document.getElementById("moodChart");
+      window.moodChartInstance = new Chart(ctx1, {
+        type: "pie",
+        data: {
+          labels: ["Positive 😊", "Negative 😞", "Neutral 😐"],
+          datasets: [{
+            data: [moodCounts.Positive, moodCounts.Negative, moodCounts.Neutral],
+            backgroundColor: ["#4caf50", "#f44336", "#ff9800"]
+          }]
+        }
+      });
+
+      // Mood trend (Line Chart)
+      const ctx2 = document.getElementById("trendChart");
+      window.trendChartInstance = new Chart(ctx2, {
+        type: "line",
+        data: {
+          labels: trendLabels,
+          datasets: [{
+            label: "Sentiment Score Over Time",
+            data: trendScores,
+            fill: false,
+            borderColor: "#2196f3",
+            tension: 0.2
+          }]
+        },
+        options: {
+          scales: {
+            y: { beginAtZero: true }
+          }
+        }
+      });
+    }
+  </script>
 </body>
 </html>
+      
